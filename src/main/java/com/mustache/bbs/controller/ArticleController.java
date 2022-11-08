@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -28,6 +29,19 @@ public class ArticleController {
         return "articles/new";
     }
 
+    @GetMapping("")
+    public String index() {
+        return "redirect:/articles/list";
+    }
+
+    @GetMapping("/list")
+    public String list(Model model) {
+        List<Article> articles = repository.findAll();
+        log.info("list={}", articles);
+        model.addAttribute("articles", articles);
+        return "articles/list";
+    }
+
     @GetMapping("/{id}")
     public String findSingle(@PathVariable Long id, Model model) {
         Optional<Article> optArticle = repository.findById(id);
@@ -39,11 +53,11 @@ public class ArticleController {
         }
     }
 
-    @PostMapping("/posts")
-    public String createArticle(ArticleDto form) {
-        log.info(form.toString());
-        Article article = form.toEntity();
-        repository.save(article);
-        return "";
+    @PostMapping("")
+    public String saveArticle(ArticleDto form) {
+        log.info("title={}", form.getTitle());
+        Article savedArticle = repository.save(form.toEntity());
+        log.info("generatedId={}", savedArticle.getId());
+        return "redirect:/articles/" + savedArticle.getId();
     }
 }
