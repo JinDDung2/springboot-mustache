@@ -5,13 +5,9 @@ import com.mustache.bbs.domain.entity.Article;
 import com.mustache.bbs.repository.ArticleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -53,11 +49,31 @@ public class ArticleController {
         }
     }
 
+    @GetMapping("/{id}/edit")
+    public String edit(@PathVariable Long id, Model model) {
+        Optional<Article> findArticle = repository.findById(id);
+        if (!findArticle.isEmpty()) {
+            model.addAttribute("article", findArticle.get());
+            return "articles/edit";
+        } else {
+            model.addAttribute("message", String.format("%d을 찾지 못했습니다.", id));
+            return "articles/error";
+        }
+    }
+
     @PostMapping("")
     public String saveArticle(ArticleDto form) {
         log.info("title={}", form.getTitle());
         Article savedArticle = repository.save(form.toEntity());
         log.info("generatedId={}", savedArticle.getId());
         return "redirect:/articles/" + savedArticle.getId();
+    }
+
+    @PostMapping("/{id}/update")
+    public String update(@PathVariable Long id, ArticleDto form, Model model) {
+        log.info("form.getTitle()={}, form.getContent()={}",form.getTitle(), form.getContent());
+        Article saveArticle = repository.save(form.toEntity());
+        model.addAttribute("article", saveArticle);
+        return "redirect:/articles/" + saveArticle.getId();
     }
 }
