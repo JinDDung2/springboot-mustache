@@ -1,15 +1,25 @@
 {{> layouts/header}}
 <h2>show page</h2>
-<div>
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Title</th>
+        <th scope="col">Content</th>
+    </tr>
+    </thead>
+    <tbody class="table-group-divider">
     {{# article}}
-        <div class="card-body">
-            <h5 class="card-title">{{title}}</h5>
-            <h6 class="card-subtitle mb-2 text-muted">{{id}}</h6>
-            <p class="card-text">{{content}}</p>
-            <a href="/articles/new" class="card-link">new article</a>
-            <a href="/articles" class="card-link">list article</a>
-        </div>
+        <tr>
+            <th>{{id}}</th>
+            <td><a href="/articles/{{id}}">{{title}}</a></td>
+            <td>{{content}}</td>
+        </tr>
+        <a href="/articles/{{id}}/edit" class="btn btn-danger">Edit</a>
+        <a href="/articles/{{id}}">조회 페이지</a>
+        <a href="/articles">목록</a>
     {{/ article}}
-</div>
+    </tbody>
+</table>
 
 {{> layouts/footer}}
